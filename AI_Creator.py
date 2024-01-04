@@ -1,6 +1,7 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import requests
 
 class Bot:
     def __init__(self, role):
@@ -21,7 +22,7 @@ def main():
     # Create the OpenAI client with the API key
     client = OpenAI(api_key=api_key)
     message = [{"role": "system", "content" : "You are a copy writer"}]
-    chat = client.chat.completions.create(model = "gpt-3.5-turbo", messages = message)
+    chat = client.chat.completions.create(model = "gpt-4", messages = message)
     reply = chat.choices[0].message.content
     print(f"ChatGPT: {reply}")
 
