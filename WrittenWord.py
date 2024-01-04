@@ -1,3 +1,6 @@
+import AI_Creator as AI
+from datetime import date
+
 class Product:
     def __init__(self, product_name, product_description, product_price, product_affiliate_link):
         self.product_name = product_name
@@ -113,9 +116,11 @@ def main():
         ortho_bed = Product("Ortho Bed", "Orthopedic Bed", 2000, "https://www.ortho-bed.com/")
         pet_hut_ortho_bed = WrittenWord(ortho_bed, "Blog", 500, "7th Grade")
         pet_hut_ortho_bed.goal()
+        pet_hut_ortho_bed_blog = Blog("6 to 11 Words, List Based", "a made up byline of the author",date.today(), "banner image in the format of *** Image Details ***, targets the target demographic of the article along with supports the headline, basically give me a 5 word search to copy and paste to find the banner image online.", "brief, follows a made up personal annecdote or narrative that is punchy and interesting and lead to a hook. Introduction should be no more than 4 sentences", "Then give me a line break then give me the list items in the following manner. Topic Overview (2 to 3 sentences), Ideal Image details similar to banner surrounded by *** Image 5 word search *** then description of the product, going from emotional to logical.","call to action, follow this formula for each list item. M-A-G-I-C Naming Formula: Magnetic Reason, Avatar, Goal, Time Interval, Container Word. Examples such as 88% Off 12-Week Bikini Blueprint, 60 Minute Make Your Friends Jealous Model Hair System, Bend Over Pain Free in 42 Days . . . Healing Fast Track")
         
     except ValueError as e:
         print(e)
+        
 
 if __name__ == "__main__":
     main()
