@@ -6,7 +6,7 @@ import requests
 URL = "https://api.openai.com/v1/chat/completions"
 
 class Bot:
-    def __init__(self, model, role, temp, top_p, n = 1, presence_penalty = 0, frequency_penalty = 0):
+    def __init__(self, model, role, temp, top_p, n=1, presence_penalty=0, frequency_penalty=0, blog_purpose=""):
         self.model = self.set_model(model)
         self.role = self.set_role(role)
         self.temp = self.set_temp(temp)
@@ -14,7 +14,13 @@ class Bot:
         self.n = self.set_n(n)
         self.presence_penalty = self.set_presence_penalty(presence_penalty)
         self.frequency_penalty = self.set_frequency_penalty(frequency_penalty)
-        self.system_message = {"role": "system", "content": "you are a informed and exceptional writer hoping to have your writing make the reader feel understood and accomplish the task of your boss, your writing can be read at a 7th grade reading level"}
+        self.blog_purpose = blog_purpose
+        self.system_message = self.create_system_message()
+
+    def create_system_message(self):
+        base_message = "You are an informed and exceptional writer. Your writing can be read at a 7th grade reading level and makes the reader feel understood"
+        purpose_message = f"The purpose of your writing is to {self.blog_purpose}." if self.blog_purpose else ""
+        return {"role": "system", "content": base_message + purpose_message}
 
         
     def set_role(self, role):

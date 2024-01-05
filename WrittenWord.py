@@ -1,12 +1,8 @@
 import AI_Creator as AI
 from datetime import date
+import Product as Prod
 
-class Product:
-    def __init__(self, product_name, product_description, product_price, product_affiliate_link):
-        self.product_name = product_name
-        self.product_description = product_description
-        self.product_price = product_price
-        self.product_affiliate_link = product_affiliate_link
+
 
 class WrittenWord():
     def __init__(self, product, type, word_limit, reading_comprehension):
@@ -50,7 +46,6 @@ class WrittenWord():
         
 class Blog(WrittenWord):
     def __init__(self, headline, banner, content_goal, overview, conclusion, keywords):
-        super().__init__()
         self.headline = headline
         self.banner = banner
         self.content_goal = content_goal
@@ -104,18 +99,22 @@ class Blog(WrittenWord):
         else:
             raise ValueError("Keywords should be between 2 and 5 words.")
         
-class Content():
-    def __init__(self, introduction, image, logic, emotion, cta):
-        self.introduction = introduction
-        self.image = image
-        self.logic = logic
-        self.emotion = emotion
-        self.cta = cta
+class List_Blog():
+    def __init__(self, blog_list):
+        self.blog_list = blog_list
 
+class Case_Study_Blog():
+    def __init__(self, case_study):
+        self.case_study = case_study
+    
+class Tutorial_Blog():
+    def __init__(self, tutorial):
+        self.tutorial = tutorial
+    
 
 def main():
     try:
-        ortho_bed = Product("Ortho Bed", "Orthopedic Bed", 2000, "https://www.ortho-bed.com/")
+        ortho_bed = Prod("Ortho Bed", "Orthopedic Bed", 2000, "https://www.ortho-bed.com/")
         pet_hut_ortho_bed = WrittenWord(ortho_bed, "Blog", 500, "7th Grade")
 
         

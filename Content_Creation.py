@@ -10,11 +10,10 @@ if not api_key:
     raise Exception("OpenAI API key not found. Please check your .env file.")
 
 class Content_Creation:
-    def __init__(self, images, intro, content, conclusion):
-        self.images = images
-        self.intro = intro
-        self.content = content
-        self.conclusion = conclusion
+    def __init__(self, product, bot):
+        self.blog_bot = bot
+        self.product = product
+        self.conversation_history = []
         
 
     def main():
