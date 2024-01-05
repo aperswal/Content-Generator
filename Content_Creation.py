@@ -1,7 +1,9 @@
-import AI_Creator as AI
-import WrittenWord as WW
+import re
 import os
+import requests
+from pexels_api import API
 from dotenv import load_dotenv
+import AI_Creator as AI
 import Product as Prod
 
 URL = "https://api.openai.com/v1/chat/completions"
@@ -10,20 +12,27 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise Exception("OpenAI API key not found. Please check your .env file.")
 
+def download_image(url, path):
+        response = requests.get(url, stream=True)
+        if response.status_code == 200:
+            with open(path, 'wb') as file:
+                file.write(response.content)
+            return True
+        return False
+    
 class Content_Creation:
     def __init__(self, product, bot):
         self.blog_bot = bot
         self.product = product
         self.conversation_history = []
         
-
     def main():
         product = input("Enter the name of the product: ")
         description = input("Enter the description of the product: ")
         price = int(input("Enter the price of the product: $"))
         link = input("Enter the link of the product: ")
         length = input("Enter the number of items in the blog: ")
-        blog_bot = AI.Bot("gpt-3.5-turbo", "assistant", 0.7, 0.8, 1, 0, 0)
+        blog_bot = AI.Bot("gpt-4-32k", "assistant", 0.7, 0.8, 1, 0, 0)
         sell = Prod.Product({product}, {description}, {price}, {link})
         blog = ""
         
@@ -33,7 +42,7 @@ class Content_Creation:
         headline = blog_bot.create_content(api_key, headline_message, conversation_history)
         blog += headline
 
-        banner_message = f"Write a search query that is 5 words and simple that would display return andimage for this blog that would be supportive of the headline and target the key demographic, and format it as *** query *** because I will use code to extract the query using regex then"
+        banner_message = f"Write a search query that is 5 words and simple that would display return andimage for this blog that would be supportive of the headline and target the key demographic, and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching"
         banner = blog_bot.create_content(api_key, banner_message, conversation_history)
         
         blog += "\n" + banner + "\n"
@@ -53,7 +62,7 @@ class Content_Creation:
             introduction = blog_bot.create_content(api_key, introduction_message, conversation_history)
             blog += introduction
             
-            image_message = f"create an image of the {item} that would be a search query, similar to the banner and format it as *** query *** because I will use code to extract the query using regex then"
+            image_message = f"create an image of the {item} that would be a search query, similar to the banner and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching"
             image = blog_bot.create_content(api_key, image_message, conversation_history)
             blog += "\n" + image + "\n"
             
@@ -73,7 +82,38 @@ class Content_Creation:
         conclusion = blog_bot.create_content(api_key, conclusion_message, conversation_history)
         blog += "\n" + conclusion
         
-        print(blog)
+        load_dotenv()
+        pexels_api_key = os.getenv("PEXELS_API_KEY")
+        pexels_api = API(pexels_api_key)
+        
+        image_queries = re.findall(r'\*\*\* (.+?) \*\*\*', blog)
 
+        image_info = []
+
+        for query in image_queries:
+            pexels_api.search(query, results_per_page=1)
+            photos = pexels_api.get_entries()
+
+            if photos:
+                photo = photos[0]
+                photo_url = photo.original
+                author_name = photo.photographer
+
+                file_name = os.path.basename(photo_url)
+                file_path = os.path.join('downloaded_images', file_name)
+                os.makedirs('downloaded_images', exist_ok=True)
+
+                if download_image(photo_url, file_path):
+                    print(f"Image downloaded: {file_path}")
+                    image_info.append({'url': photo_url, 'author': author_name, 'file_path': file_path})
+                else:
+                    print("Failed to download image.")
+
+        # Print the image details
+        for info in image_info:
+            print(f"Image URL: {info['url']}, Author: {info['author']}, File Path: {info['file_path']}")
+            
+        print(blog)
+        
     if __name__ == "__main__":
         main()
