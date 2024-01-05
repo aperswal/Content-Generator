@@ -8,13 +8,8 @@ class Product:
         self.product_price = product_price
         self.product_affiliate_link = product_affiliate_link
 
-class Marketing:
-    def __init__(self):
-        pass
-        
-class WrittenWord(Marketing):
+class WrittenWord():
     def __init__(self, product, type, word_limit, reading_comprehension):
-        super().__init__()
         self.product = product
         self.type = self.set_type(type)
         self.word_limit = self.set_word_limit(word_limit)
@@ -52,35 +47,34 @@ class WrittenWord(Marketing):
             return reading_comprehension
         else:
             raise ValueError("Invalid reading comprehension level. Please choose among '7th Grade', '8th Grade', or '9th Grade'.")
-    
-    def goal(self):
-        print(f'We need to write a {self.type} with a word limit of {self.word_limit} at a reading comprehension of {self.reading_comprehension} to sell {self.product.product_name} at ${(self.product.product_price):.2f} to make ${(self.product.product_price * 0.2):.2f}.')
         
 class Blog(WrittenWord):
-    def __init__(self, headline, banner, content, cta):
+    def __init__(self, headline, banner, content_goal, overview, conclusion, keywords):
         super().__init__()
         self.headline = headline
         self.banner = banner
-        self.content = content
-        self.cta = cta
-    
+        self.content_goal = content_goal
+        self.overview = overview
+        self.conclusion = conclusion
+        self.keywords = keywords
+        
     def get_headline(self):
         return self.headline
-    
-    def get_byLine(self):
-        return self.byLine
-    
-    def get_date(self):
-        return self.date
     
     def get_banner(self):
         return self.banner
     
-    def get_content(self):
-        return self.content
+    def get_content_goal(self):
+        return self.content_goal
     
-    def get_cta(self):
-        return self.cta
+    def get_overview(self):
+        return self.overview
+    
+    def get_conclusion(self):
+        return self.conclusion
+    
+    def get_keywords(self):
+        return self.keywords
     
     def set_headline(self, headline):
         if 6 <=len(headline) <= 11:
@@ -89,19 +83,41 @@ class Blog(WrittenWord):
             raise ValueError("Headline should be between 6 and 11 words.")
         
     def set_banner(self, banner):
-        self.banner = banner
+        return self.banner
         
-    def set_content(self, content):
-        self.content = content
+    def set_content_goal(self, goal):
+        valid_goals = ["Traffic", "SEO", "Brand"]
+        if goal in valid_goals:
+            return goal
+        else:
+            raise ValueError("Invalid content goal. Please choose among 'Traffic', 'SEO', or 'Brand'.")
     
-    def set_cta(self, cta):
+    def set_overview(self, overview):
+        return overview
+    
+    def set_conclusion(self, conclusion):
+        return conclusion
+    
+    def set_keywords(self, keywords):
+        if 2 <= len(keywords) <= 5:
+            return keywords
+        else:
+            raise ValueError("Keywords should be between 2 and 5 words.")
+        
+class Content():
+    def __init__(self, introduction, image, logic, emotion, cta):
+        self.introduction = introduction
+        self.image = image
+        self.logic = logic
+        self.emotion = emotion
         self.cta = cta
+
 
 def main():
     try:
         ortho_bed = Product("Ortho Bed", "Orthopedic Bed", 2000, "https://www.ortho-bed.com/")
         pet_hut_ortho_bed = WrittenWord(ortho_bed, "Blog", 500, "7th Grade")
-        pet_hut_ortho_bed.goal()
+
         
     except ValueError as e:
         print(e)

@@ -10,18 +10,75 @@ if not api_key:
     raise Exception("OpenAI API key not found. Please check your .env file.")
 
 class Content_Creation:
-    def __init__(self):
-        pass
+    def __init__(self, images, intro, content, conclusion):
+        self.images = images
+        self.intro = intro
+        self.content = content
+        self.conclusion = conclusion
+        
 
     def main():
-        blog_bot = AI.Bot("gpt-4", "User", 0.7, 0.8, 1, 0, 0)
+        blog_bot = AI.Bot("gpt-3.5-turbo", "assistant", 0.7, 0.8, 1, 0, 0)
         ortho_bed = WW.Product("Ortho Bed", "Orthopedic Bed for Extra Large Dogs", 2000, "https://www.ortho-bed.com/")
-        pet_hut_ortho_bed = WW.WrittenWord(ortho_bed, "Blog", 700, "7th Grade")
+        blog = ""
         
+        conversation_history = []
         
-        content = blog_bot.create_content(api_key, f"We need to write a {pet_hut_ortho_bed. type} with atleast {pet_hut_ortho_bed.word_limit} words at a reading comprehension of {pet_hut_ortho_bed.reading_comprehension} to sell {pet_hut_ortho_bed.product.product_name} at ${(pet_hut_ortho_bed.product.product_price):.2f}, write the blog in the following format Headline should be 6 to 11 words and based on a top 3 list format, like 3 best accessories for your large dog, then I want you to give me an ideal banner image in the format of *** Image Details ***, make it so that the banner image can easily be looked up and inputted into the blog and targets the target demographic of the article along with supports the headline, basically give me a 5 word search to copy and paste to find the banner image online. Then give me an introduction that is brief, follows a made up personal annecdote or narrative that is punchy and interesting and lead to a hook. Introduction should be no more than 4 sentences. Then give me a line break then give me the list items in the following manner. Then repeat this for each item in the list for the blog Topic Overview (2 to 3 sentences), Ideal Image details similar to banner surrounded by *** Image 5 word search *** then description of the product, it should be very indepth, 2 paragraphs each, going from emotional to logical and then a call to action, follow this formula for each list item's Call to Action. M-A-G-I-C Naming Formula: Magnetic Reason, Avatar, Goal, Time Interval, Container Word. Examples such as 88% Off 12-Week Bikini Blueprint, 60 Minute Make Your Friends Jealous Model Hair System, Bend Over Pain Free in 42 Days . . . Healing Fast Track. So the call to action, last sentence of that portion of the blog post should be that topic named after MAGIC, I don't want each portion written for me I just want the sentence. The {pet_hut_ortho_bed.product.product_name} is just one of the product we are selling, so make this blog actually informative to users so even if they aren't looking for the product they still read through it so it shouldn't be focused around the {pet_hut_ortho_bed.product.product_name} but one of the list items should be that. Lastly they should not know we are selling these products, we are just affiliates writing a blog post to them")
+        headline_message = f"create a headline for a blog post that is list based between 6 - 11 words and covers 3 items that would include one {ortho_bed.product_description}, without naming the {ortho_bed.product_name}"
+        headline = blog_bot.create_content(api_key, headline_message, conversation_history)
+        blog += headline
+        print(headline)
+
+        banner_message = f"Write a search query that is 5 words and simple that would display return andimage for this blog that would be supportive of the headline and target the key demographic, and format it as *** query *** because I will use code to extract the query using regex then"
+        banner = blog_bot.create_content(api_key, banner_message, conversation_history)
+        blog += "\n" + banner + "\n"
+        print("\n" + banner + "\n")
+
+        topic_overview_message = f"Write an overview of the topic that would be about 3 - 4 sentences, narrative based showing that you are part of the key demographic, make the introduction to the topic interesting and have a hook so people want to keep reading."
+        topic_overview = blog_bot.create_content(api_key, topic_overview_message, conversation_history)
+        blog += topic_overview
+        print(topic_overview)
         
-        print(content)
+        covered_content_message = f"Name the specific things you will cover in this blog in the following format, only give the names: item 1, item 2, ... item n and all in one line I will be splitting this later in my code with .split(', ') so make it accomodating for that"
+        covered_content = blog_bot.create_content(api_key, covered_content_message, conversation_history)
+        list_items = covered_content.split(", ")
+        
+        for item in list_items:
+            blog += "\n" + item + "\n"
+            
+            print("\n" + item + "\n")
+            
+            introduction_message = f"create an introduction of the {item} that would be 2 - 3 sentences"
+            introduction = blog_bot.create_content(api_key, introduction_message, conversation_history)
+            blog += introduction
+            print(introduction)
+            
+            image_message = f"create an image of the {item} that would be a search query, similar to the banner and format it as *** query *** because I will use code to extract the query using regex then"
+            image = blog_bot.create_content(api_key, image_message, conversation_history)
+            blog += "\n" + image + "\n"
+            print("\n" + image + "\n")
+            
+            logic_message = f"create a logical paragraph analysis of the {item} that would be 4 - 5 sentences"
+            logic = blog_bot.create_content(api_key, logic_message, conversation_history)
+            blog += logic
+            print(logic)
+            
+            emotional_message = f"create a logical paragraph analysis of the {item} that would be 2 - 3 sentences"
+            emotion = blog_bot.create_content(api_key, emotional_message, conversation_history)
+            blog += "\n" + emotion + "\n"
+            print(emotion)
+            
+            cta_message = f"create a call to action for the {item} that would be 1 sentence, it should in the cta have a magnetic reason why they should buy, acknowledge the avatar that would be buying it, give them a goal, show them time running out and end with a container phrase that can be focused on rhyme or alliteration"
+            cta = blog_bot.create_content(api_key, cta_message, conversation_history)
+            blog += cta + "\n"
+            print(cta + "\n")
+            
+        conclusion_message = f"create a conclusion of the blog that would be 2 - 3 sentences"
+        conclusion = blog_bot.create_content(api_key, conclusion_message, conversation_history)
+        blog += "\n" + conclusion
+        print("\n" + conclusion)
+        
+        print(blog)
 
     if __name__ == "__main__":
         main()

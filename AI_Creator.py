@@ -12,8 +12,10 @@ class Bot:
         self.temp = self.set_temp(temp)
         self.top_p = self.set_top_p(top_p)
         self.n = self.set_n(n)
-        self.presence_penaly = self.set_presence_penalty(presence_penalty)
+        self.presence_penalty = self.set_presence_penalty(presence_penalty)
         self.frequency_penalty = self.set_frequency_penalty(frequency_penalty)
+        self.system_message = {"role": "system", "content": "you are a informed and exceptional writer hoping to have your writing make the reader feel understood and accomplish the task of your boss, your writing can be read at a 7th grade reading level"}
+
         
     def set_role(self, role):
         valid_roles = ["user", "system", "assistant", ]
@@ -23,11 +25,11 @@ class Bot:
             raise ValueError("Invalid role. Please enter 'system', 'user', or 'assistant'.")
     
     def set_model(self, model):
-        valid_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-32k"]
+        valid_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-32k", "gpt-3.5"]
         if model in valid_models:
             return model.lower()
         else:
-            raise ValueError("Invalid model. Please enter 'gpt-3.5-turbo',gpt-4', or 'gpt-4-32k'.")
+            raise ValueError("Invalid model. Please enter 'gpt-3.5-turbo',gpt-4','gpt-4-32k' or 'gpt-3.5'.")
     
     def set_temp(self, temp):
         if -1 <= temp <= 1:
@@ -36,7 +38,6 @@ class Bot:
             raise ValueError("Invalid temperature. Please enter a value between -1 and 1.")
     
     def set_top_p(self, top_p):
-        
         return top_p
     
     def set_n(self, n):
@@ -48,15 +49,20 @@ class Bot:
     def set_frequency_penalty(self, penalty):
         return penalty
     
-    def create_content(self, api_key, message):
+    def create_content(self, api_key, message, conversation_history):
+        if not conversation_history or conversation_history[0]['role'] != 'system':
+            conversation_history.insert(0, self.system_message)
+
+        conversation_history.append({"role": "user", "content": message})
+
         payload = {
             "model": self.model,
-            "messages": [{"role": self.role, "content": message}],
+            "messages": conversation_history, 
             "temperature": self.temp,
             "top_p": self.top_p,
             "n": self.n,
             "stream": False,
-            "presence_penalty": self.presence_penaly,  
+            "presence_penalty": self.presence_penalty,
             "frequency_penalty": self.frequency_penalty,
         }
 
@@ -66,17 +72,31 @@ class Bot:
         }
 
         response = requests.post(URL, headers=headers, json=payload, stream=False)
-        return response.content.decode('utf-8')
+        response_data = response.json()
+        assistant_message = response_data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        conversation_history.append({"role": "assistant", "content": assistant_message})
+
+        return assistant_message
 
 def main():
     load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise Exception("OpenAI API key not found. Please check your .env file.")
-    blog_bot = Bot("gpt-4","System", 0.7, 0.8, 1, 0, 0)
-    content = blog_bot.create_content(api_key, "300 word Blog on Orthopedic Bed's Advantages at a 6th grade reading comprehension")
-    print(content)
     
+    bot = Bot("gpt-4", "assistant", 0.7, 0.8, 1, 0, 0)
+    conversation_history = []
+
+    user_message = "Hello, how are you?"
+    print("User:", user_message)
+    response = bot.create_content(api_key, user_message, conversation_history)
+    print("Assistant:", response)
+
+    user_message = "I have a question about Python."
+    print("User:", user_message)
+    response = bot.create_content(api_key, user_message, conversation_history)
+    print("Assistant:", response)
+
 if __name__ == "__main__":
     main()
     
