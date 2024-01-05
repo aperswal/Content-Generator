@@ -48,7 +48,7 @@ class Content_Creation:
         list_items = covered_content.split(", ")
         
         for item in list_items:
-            blog += "\n" + item + "\n"
+            blog += "\n" + "Topic:" + item + "\n"
             
             introduction_message = f"create an introduction of the {item} that would be 2 - 3 sentences"
             introduction = blog_bot.create_content(api_key, introduction_message, conversation_history)

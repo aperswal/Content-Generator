@@ -4,18 +4,37 @@ import AI_Creator as AI
 import Content_Creation as CC
 import regex as re
 import Image as Img
+from docx import Document
+from docx.shared import Inches
+
+document = Document()
+style = document.styles['Normal']
+style.font.name = 'Calibri'
+
 
 def main():
     blog = CC.Content_Creation.create()
     print(blog)
+    
     image_queries = re.findall(r'\*\*\*\s*(.+?)\s*\*\*\*', blog)
-    for query in image_queries:
-        Img.download(query)
+    headline = re.search(r'"(.*?)"', blog)
+    headline = headline.group(1)
+    print(headline)
+    topics = re.findall(r"Topic:\s*(.*?)\n", blog, re.IGNORECASE)
+    print(topics)
+    # for query in image_queries:
+    #     Img.download(query)
+        
+    document.add_heading(headline, 0)
+    
+    document.save('demo.docx')
+    
     
             
 
 if __name__ == "__main__":
     main()
+    
     
     
     
