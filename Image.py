@@ -4,30 +4,29 @@ from pexels_api import API
 from dotenv import load_dotenv
 
 def download_image(url, file_path):
-    response = requests.get(url, stream=True)
-    if response.status_code == 200:
-        with open(file_path, 'wb') as file:
-            file.write(response.content)
-        return True
+    if not os.path.exists(file_path):
+        response = requests.get(url, stream=True)
+        if response.status_code == 200:
+            with open(file_path, 'wb') as file:
+                file.write(response.content)
+            return True
     return False
 
-def main():
+def download(query):
     load_dotenv()
     api_key = os.getenv("PEXELS_API_KEY")
     if not api_key:
         raise Exception("Pexels API key not found. Please check your .env file.")
 
     api = API(api_key)
-    query = input("Enter the image query: ")
-    output_folder = 'downloaded_images'  # or use a specific folder path
+    output_folder = 'downloaded_images'
 
     os.makedirs(output_folder, exist_ok=True)
 
-    api.search(query, results_per_page=1)  # Adjust number of results as needed
+    api.search(query, results_per_page=15)  
     photos = api.get_entries()
 
-    if photos:
-        photo = photos[0]  # Getting the first photo
+    for photo in photos:
         photo_url = photo.original
         author_name = photo.photographer
 
@@ -38,8 +37,11 @@ def main():
             print(f"Image downloaded: {file_path}")
             print(f"Photo URL: {photo_url}")
             print(f"Author Name: {author_name}")
+            break  # Stop after downloading the first available image
         else:
-            print("Failed to download image.")
-
-if __name__ == '__main__':
-    main()
+            print(f"Image already exists: {file_path}")
+            
+if __name__ == "__main__":
+    queries = ["cat", "large cat", "small cat"]
+    for query in queries:
+        download(query)

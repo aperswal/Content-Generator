@@ -31,7 +31,7 @@ class Bot:
             raise ValueError("Invalid role. Please enter 'system', 'user', or 'assistant'.")
     
     def set_model(self, model):
-        valid_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-32k", "gpt-3.5"]
+        valid_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-32k", "gpt-3.5", "gpt-4-32k-0314"]
         if model in valid_models:
             return model.lower()
         else:
