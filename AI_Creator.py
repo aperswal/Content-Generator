@@ -16,19 +16,27 @@ class Bot:
         self.frequency_penalty = self.set_frequency_penalty(frequency_penalty)
         
     def set_role(self, role):
-        valid_roles = ["User", "System", "Assistant", ]
+        valid_roles = ["user", "system", "assistant", ]
         if role in valid_roles:
-            return role.lower()
+            return role
         else:
-            raise ValueError("Invalid role. Please enter 'System', 'User', or 'Assistant'.")
+            raise ValueError("Invalid role. Please enter 'system', 'user', or 'assistant'.")
     
     def set_model(self, model):
-        return model
+        valid_models = ["gpt-3.5-turbo", "gpt-4", "gpt-4-32k"]
+        if model in valid_models:
+            return model.lower()
+        else:
+            raise ValueError("Invalid model. Please enter 'gpt-3.5-turbo',gpt-4', or 'gpt-4-32k'.")
     
     def set_temp(self, temp):
-        return temp
+        if -1 <= temp <= 1:
+            return temp
+        else:
+            raise ValueError("Invalid temperature. Please enter a value between -1 and 1.")
     
     def set_top_p(self, top_p):
+        
         return top_p
     
     def set_n(self, n):
