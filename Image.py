@@ -1,47 +1,92 @@
 import os
 import requests
-from pexels_api import API
 from dotenv import load_dotenv
+from pexelsapi.pexels import Pexels
+from datetime import datetime
+
+downloaded_urls = set()
 
 def download_image(url, file_path):
+    """
+    Downloads an image from a given URL and saves it to the specified file path.
+    """
     if not os.path.exists(file_path):
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(file_path, 'wb') as file:
                 file.write(response.content)
-            return True
-    return False
+            return file_path
+    return None
 
-def download(query):
+def unique_filename(directory, base_name, extension):
+    """
+    Generates a unique filename by appending a timestamp.
+    """
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"{base_name}_{timestamp}.{extension}"
+    return os.path.join(directory, filename)
+
+def download_landscape(query, directory):
+    """
+    Downloads a landscape image based on the specified query.
+    """
     load_dotenv()
     api_key = os.getenv("PEXELS_API_KEY")
     if not api_key:
         raise Exception("Pexels API key not found. Please check your .env file.")
 
-    api = API(api_key)
-    output_folder = 'downloaded_images'
-
-    os.makedirs(output_folder, exist_ok=True)
-
-    api.search(query, results_per_page=15)  
-    photos = api.get_entries()
-
-    for photo in photos:
-        photo_url = photo.original
-        author_name = photo.photographer
-
-        file_name = os.path.basename(photo_url)
-        file_path = os.path.join(output_folder, file_name)
-
-        if download_image(photo_url, file_path):
-            print(f"Image downloaded: {file_path}")
-            print(f"Photo URL: {photo_url}")
-            print(f"Author Name: {author_name}")
-            break  # Stop after downloading the first available image
+    pexel = Pexels(api_key)
+    page = 1
+    while True:
+        search_photos = pexel.search_photos(query=query, orientation='landscape', size='', color='', locale='', page=page, per_page=1)
+        if search_photos['photos']:
+            photo_url = search_photos['photos'][0]['src']['landscape']
+            if photo_url not in downloaded_urls:
+                downloaded_urls.add(photo_url)
+                file_path = unique_filename(directory, f"landscape_{query}", "jpg")
+                return download_image(photo_url, file_path)
         else:
-            print(f"Image already exists: {file_path}")
-            
+            return None
+        page += 1
+
+def download_medium_square(query, directory):
+    """
+    Downloads a medium square image based on the specified query.
+    """
+    load_dotenv()
+    api_key = os.getenv("PEXELS_API_KEY")
+    if not api_key:
+        raise Exception("Pexels API key not found. Please check your .env file.")
+
+    pexel = Pexels(api_key)
+    page = 1
+    while True:
+        search_photos = pexel.search_photos(query=query, orientation='square', size='medium', color='', locale='', page=page, per_page=1)
+        if search_photos['photos']:
+            photo_url = search_photos['photos'][0]['src']['medium']
+            if photo_url not in downloaded_urls:
+                downloaded_urls.add(photo_url)
+                file_path = unique_filename(directory, f"medium_square_{query}", "jpg")
+                return download_image(photo_url, file_path)
+        else:
+            return None
+        page += 1
+
+def main():
+    # Example query for testing
+    query = "ocean"
+
+    # Download a portrait image based on the query
+    if download_landscape(query):
+        print(f"Portrait image for '{query}' downloaded successfully.")
+    else:
+        print(f"Failed to download portrait image for '{query}'.")
+
+    # Download a medium square image based on the query
+    if download_medium_square(query):
+        print(f"Medium square image for '{query}' downloaded successfully.")
+    else:
+        print(f"Failed to download medium square image for '{query}'.")
+
 if __name__ == "__main__":
-    queries = ["cat", "large cat", "small cat"]
-    for query in queries:
-        download(query)
+    main()

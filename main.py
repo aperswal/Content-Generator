@@ -31,14 +31,12 @@ def main():
     banner_query = re.search(r'\*\*\*\s*(.+?)\s*\*\*\*', blog)
     print(banner_query)
     if banner_query:
-        Img.download(banner_query.group(1))  # Download banner image
-        # Add first image as banner
-        images = os.listdir(folder_dir)
-        if images:
-            banner_image_path = os.path.join(folder_dir, images[0])
-            document.add_picture(banner_image_path, width=Inches(6.0), height = Inches(3.0))
+        banner_image_path = Img.download_landscape(banner_query.group(1), folder_dir)  # Download banner image
+        if banner_image_path:
+            document.add_picture(banner_image_path, width=Inches(6.0), height=Inches(3.0))
             last_paragraph = document.paragraphs[-1] 
             last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            
     print(banner_query)
     # Extract banner image query and introduction
     banner_query_end = banner_query.end() if banner_query else 0
@@ -65,16 +63,12 @@ def main():
         image_query = re.search(r'\*\*\*\s*(.+?)\s*\*\*\*', topic_pattern)
         print(image_query)
         if image_query:
-            Img.download(image_query.group(1))  # Download image
-            images = os.listdir(folder_dir)
-            if images:
-                image_path = os.path.join(folder_dir, images[current_topic_number + 1])
-                
-                current_topic_number += 2
-                
-                document.add_picture(image_path, width=Inches(3.0), height = Inches(3.0))
+            topic_image_path = Img.download_medium_square(image_query.group(1), folder_dir)  # Download image
+            if topic_image_path:
+                document.add_picture(topic_image_path, width=Inches(4.0), height=Inches(4.0))
                 last_paragraph = document.paragraphs[-1] 
                 last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                
         print(image_query)
         
         # Extract and add content of the topic
