@@ -1,4 +1,3 @@
-"""
 # Automated Blog Content and Image Generation Tool
 
 This project consists of an automated system for generating blog content and downloading relevant images using the Pexels API. The system leverages AI-driven content creation to produce engaging blog posts and automatically sources related images to complement the text.
