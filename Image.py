@@ -29,6 +29,7 @@ def unique_filename(directory, base_name, extension):
 def download_landscape(query, directory):
     """
     Downloads a landscape image based on the specified query.
+    Returns the file path, image URL, and photographer's name.
     """
     load_dotenv()
     api_key = os.getenv("PEXELS_API_KEY")
@@ -40,18 +41,22 @@ def download_landscape(query, directory):
     while True:
         search_photos = pexel.search_photos(query=query, orientation='landscape', size='', color='', locale='', page=page, per_page=1)
         if search_photos['photos']:
-            photo_url = search_photos['photos'][0]['src']['landscape']
+            photo = search_photos['photos'][0]
+            photo_url = photo['src']['landscape']
+            photographer_name = photo['photographer']
             if photo_url not in downloaded_urls:
                 downloaded_urls.add(photo_url)
                 file_path = unique_filename(directory, f"landscape_{query}", "jpg")
-                return download_image(photo_url, file_path)
+                file_path = download_image(photo_url, file_path)
+                return file_path, photo_url, photographer_name
         else:
-            return None
+            return None, None, None
         page += 1
 
 def download_medium_square(query, directory):
     """
     Downloads a medium square image based on the specified query.
+    Returns the file path, image URL, and photographer's name.
     """
     load_dotenv()
     api_key = os.getenv("PEXELS_API_KEY")
@@ -63,13 +68,16 @@ def download_medium_square(query, directory):
     while True:
         search_photos = pexel.search_photos(query=query, orientation='square', size='medium', color='', locale='', page=page, per_page=1)
         if search_photos['photos']:
-            photo_url = search_photos['photos'][0]['src']['medium']
+            photo = search_photos['photos'][0]
+            photo_url = photo['src']['medium']
+            photographer_name = photo['photographer']
             if photo_url not in downloaded_urls:
                 downloaded_urls.add(photo_url)
                 file_path = unique_filename(directory, f"medium_square_{query}", "jpg")
-                return download_image(photo_url, file_path)
+                file_path = download_image(photo_url, file_path)
+                return file_path, photo_url, photographer_name
         else:
-            return None
+            return None, None, None
         page += 1
 
 def main():
