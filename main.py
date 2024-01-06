@@ -44,7 +44,7 @@ def main():
             document.add_picture(banner_info[0], width=Inches(6.0), height=Inches(3.0))
             last_paragraph = document.add_paragraph()
             last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            add_hyperlink(last_paragraph, f"Image by {banner_info[2]}", banner_info[1])
+            add_hyperlink(last_paragraph, f"Image by {banner_info[2]} through Pexel", banner_info[1])
             
     # Extract banner image query and introduction
     banner_query_end = banner_query.end() if banner_query else 0
@@ -71,7 +71,7 @@ def main():
                 document.add_picture(topic_image_info[0], width=Inches(4.0), height=Inches(4.0))
                 last_paragraph = document.add_paragraph()
                 last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                add_hyperlink(last_paragraph, f"Image by {topic_image_info[2]}", topic_image_info[1])
+                add_hyperlink(last_paragraph, f"Image by {topic_image_info[2]} through Pexel", topic_image_info[1])
                 
         # Extract and add content of the topic
         topic_content = re.split(r'\*\*\*\s*.+?\s*\*\*\*', topic_pattern)
