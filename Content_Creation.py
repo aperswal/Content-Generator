@@ -43,12 +43,12 @@ class Content_Creation:
         topic_overview = blog_bot.create_content(api_key, topic_overview_message, conversation_history)
         blog += topic_overview
         
-        covered_content_message = f"Name the specific things you will cover in this blog in the following format, only give the names: item 1, item 2, ... item n and all in one line I will be splitting this later in my code with .split(', ') so make it accomodating for that"
+        covered_content_message = f"Name the specific things you will cover in this blog in the following format, only give the names: and seperate them by a comma and all in one line I will be splitting this later in my code with .split(', ') so make it accomodating for that"
         covered_content = blog_bot.create_content(api_key, covered_content_message, conversation_history)
         list_items = covered_content.split(", ")
         
         for item in list_items:
-            blog += "\n" + "Topic:" + item + "\n"
+            blog += "\n" + "Topic: " + item + "\n"
             
             introduction_message = f"create an introduction of the {item} that would be 2 - 3 sentences"
             introduction = blog_bot.create_content(api_key, introduction_message, conversation_history)
