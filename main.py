@@ -15,6 +15,8 @@ document = Document()
 folder_dir = r"C:\Users\adity\OneDrive\Desktop\Affill\downloaded_images"
 
 def main():
+    current_topic_number = 0
+    
     blog = CC.Content_Creation.create()
     print(blog)
     
@@ -24,7 +26,7 @@ def main():
 
     # Add headline to the document
     document.add_heading(headline, level=0)
-
+        
     # Extract and download banner image
     banner_query = re.search(r'\*\*\*\s*(.+?)\s*\*\*\*', blog)
     print(banner_query)
@@ -56,6 +58,7 @@ def main():
 
         # Add topic title and overview to the document
         document.add_heading(topic_title.group(1), level=1)
+        
         document.add_paragraph(overview.strip())
 
         # Extract and download image for this topic
@@ -65,7 +68,10 @@ def main():
             Img.download(image_query.group(1))  # Download image
             images = os.listdir(folder_dir)
             if images:
-                image_path = os.path.join(folder_dir, images[topic_patterns.index(topic_pattern)+1])
+                image_path = os.path.join(folder_dir, images[current_topic_number + 1])
+                
+                current_topic_number += 2
+                
                 document.add_picture(image_path, width=Inches(3.0), height = Inches(3.0))
                 last_paragraph = document.paragraphs[-1] 
                 last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -78,5 +84,6 @@ def main():
 
     # Save the document
     document.save('demo.docx')
+    
 if __name__ == "__main__":
     main()
