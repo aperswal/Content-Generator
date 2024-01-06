@@ -5,6 +5,7 @@ from pexels_api import API
 from dotenv import load_dotenv
 import AI_Creator as AI
 import Product as Prod
+import Google_Trends as GT
 
 URL = "https://api.openai.com/v1/chat/completions"
 load_dotenv()
@@ -27,14 +28,15 @@ class Content_Creation:
         blog_bot = AI.Bot("gpt-3.5-turbo", "assistant", 0.7, 0.8, 1, 0, 0)
         sell = Prod.Product({product}, {description}, {price}, {link})
         blog = ""
+        key_words = GT.get_trending_keywords(list({product}))
         
         conversation_history = []
         
-        headline_message = f"Generate a catchy and concise blog headline, within 6 to 11 words, focusing on a list of {length} related items or alternatives. One of these items should be closely associated with or similar to '{sell.product_description}'. The headline should be engaging and tailored to highlight the unique features of these items, enticing readers to learn more about them, particularly the affiliate product."
+        headline_message = f"Generate a catchy and concise blog headline, within 6 to 11 words, focusing on a list of {length} related items or alternatives. One of these items should be closely associated with or similar to '{sell.product_description}'. The headline should be engaging and tailored to highlight the unique features of these items, enticing readers to learn more about them, particularly the affiliate product. Make sure the headline has atleast one word from this list of keywords: {key_words}"
         headline = blog_bot.create_content(api_key, headline_message, conversation_history)
         blog += headline
 
-        banner_message = f"Write a search query that is 5 words and simple that would display return andimage for this blog that would be supportive of the headline and target the key demographic, and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching, MAKE SURE IT IS 5 WORDS AND SURROUNDED BY *** query ***"
+        banner_message = f"Write a search query that is 5 words and simple that would display return andimage for this blog that would be supportive of the headline and target the key demographic, and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching, MAKE SURE IT IS 5 WORDS AND SURROUNDED BY *** query ***, lastly if one of the keywords: {key_words} sounds like a company, then don't add it to your query since it will be hard to find the image then, make the query as simple as possible. MAKE SURE THE QUERY ITSELF IS SURROUNDED BY *** ON ONE SIDE AND *** ON THE OTHER SIDE, IT SHOULD NOT BE ***query*** and then the actual query but rather have the search in the middle"
         banner = blog_bot.create_content(api_key, banner_message, conversation_history)
         
         blog += "\n" + banner + "\n"
@@ -54,11 +56,11 @@ class Content_Creation:
             introduction = blog_bot.create_content(api_key, introduction_message, conversation_history)
             blog += introduction
             
-            image_message = f"create an image of the {item} that would be a search query, similar to the banner and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching, MAKE SURE IT IS 5 WORDS AND SURROUNDED BY *** query ***"
+            image_message = f"create an image of the {item} that would be a search query, similar to the banner and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching, MAKE SURE IT IS 5 WORDS AND SURROUNDED BY *** query ***, lastly if one of the keywords: {key_words} sounds like a company, then don't add it to your query since it will be hard to find the image then, make the query as simple as possible. MAKE SURE THE QUERY ITSELF IS SURROUNDED BY *** ON ONE SIDE AND *** ON THE OTHER SIDE, IT SHOULD NOT BE ***query*** and then the actual query but rather have the search in the middle"
             image = blog_bot.create_content(api_key, image_message, conversation_history)
             blog += "\n" + image + "\n"
             
-            logic_message = f"create a logical paragraph analysis of the {item} that would be 4 - 5 sentences"
+            logic_message = f"create a logical paragraph analysis of the {item} that would be 4 - 5 sentences and then have one sentence that is of relevance that includes atleast one keyword from this list of keywords: {key_words}"
             logic = blog_bot.create_content(api_key, logic_message, conversation_history)
             blog += logic
             
@@ -77,4 +79,4 @@ class Content_Creation:
         return blog
         
     if __name__ == "__main__":
-        create()
+        print(create())

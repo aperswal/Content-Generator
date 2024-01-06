@@ -7,6 +7,12 @@ import docx
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
+# Code to Measure time taken by program to execute. 
+import time 
+
+# store starting time 
+begin = time.time() 
+
 document = Document()
 folder_dir = r"C:\Users\adity\OneDrive\Desktop\Affill\downloaded_images"
 
@@ -43,6 +49,7 @@ def main():
         if banner_info[0]:
             document.add_picture(banner_info[0], width=Inches(6.0), height=Inches(3.0))
             last_paragraph = document.add_paragraph()
+            last_paragraph = document.paragraphs[-1] 
             last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
             add_hyperlink(last_paragraph, f"Image by {banner_info[2]} through Pexel", banner_info[1])
             
@@ -70,6 +77,7 @@ def main():
             if topic_image_info[0]:
                 document.add_picture(topic_image_info[0], width=Inches(4.0), height=Inches(4.0))
                 last_paragraph = document.add_paragraph()
+                last_paragraph = document.paragraphs[-1] 
                 last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 add_hyperlink(last_paragraph, f"Image by {topic_image_info[2]} through Pexel", topic_image_info[1])
                 
@@ -80,6 +88,13 @@ def main():
 
     # Save the document
     document.save('demo.docx')
+    time.sleep(1) 
+    
+    # store end time 
+    end = time.time() 
+    
+    # total time taken 
+    print(f"Total runtime of the program is {end - begin}") 
     
 if __name__ == "__main__":
     main()
