@@ -83,7 +83,6 @@ def download_medium_square(query, directory):
 def main():
     # Example query for testing
     query = "ocean"
-
     # Download a portrait image based on the query
     if download_landscape(query):
         print(f"Portrait image for '{query}' downloaded successfully.")

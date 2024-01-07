@@ -14,7 +14,7 @@ import time
 begin = time.time() 
 
 document = Document()
-folder_dir = r"C:\Users\adity\OneDrive\Desktop\Affill\downloaded_images"
+folder_dir = r"C:\Users\adity\OneDrive\Desktop\ContentGen Blog Creator\downloaded_images"
 
 def add_hyperlink(paragraph, text, url):
     part = paragraph.part
@@ -48,6 +48,8 @@ def main():
         banner_info = Img.download_landscape(banner_query.group(1), folder_dir)
         if banner_info[0]:
             document.add_picture(banner_info[0], width=Inches(6.0), height=Inches(3.0))
+            last_paragraph = document.paragraphs[-1] 
+            last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
             last_paragraph = document.add_paragraph()
             last_paragraph = document.paragraphs[-1] 
             last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -76,6 +78,8 @@ def main():
             topic_image_info = Img.download_medium_square(image_query.group(1), folder_dir)
             if topic_image_info[0]:
                 document.add_picture(topic_image_info[0], width=Inches(4.0), height=Inches(4.0))
+                last_paragraph = document.paragraphs[-1] 
+                last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 last_paragraph = document.add_paragraph()
                 last_paragraph = document.paragraphs[-1] 
                 last_paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER

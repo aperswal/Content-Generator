@@ -28,7 +28,8 @@ class Content_Creation:
         blog_bot = AI.Bot("gpt-3.5-turbo", "assistant", 0.7, 0.8, 1, 0, 0)
         sell = Prod.Product({product}, {description}, {price}, {link})
         blog = ""
-        key_words = GT.get_trending_keywords(list({product}))
+        key_words = [product]
+        #key_words = GT.get_trending_keywords(list({product}))
         
         conversation_history = []
         
