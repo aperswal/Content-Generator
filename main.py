@@ -14,7 +14,7 @@ import time
 begin = time.time() 
 
 document = Document()
-folder_dir = r"C:\Users\adity\OneDrive\Desktop\ContentGen Blog Creator\downloaded_images"
+folder_dir = r"C:\Users\adity\OneDrive\Desktop\Projects\ContentGen Blog Creator\downloaded_images"
 
 def add_hyperlink(paragraph, text, url):
     part = paragraph.part
