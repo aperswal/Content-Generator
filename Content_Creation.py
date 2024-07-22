@@ -1,83 +1,103 @@
-import re
 import os
-import requests
-from pexels_api import API
+import openai
 from dotenv import load_dotenv
-import AI_Creator as AI
-import Product as Prod
-import Google_Trends as GT
 
-URL = "https://api.openai.com/v1/chat/completions"
 load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key:
-    raise Exception("OpenAI API key not found. Please check your .env file.")
 
-class Content_Creation:
-    def __init__(self, product, bot):
-        self.blog_bot = bot
-        self.product = product
+try:
+    from openai import OpenAI
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+except ImportError:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    client = openai
+
+class ContentCreation:
+    def __init__(self):
         self.conversation_history = []
-        
-    def create():
-        product = input("Enter the name of the product: ")
-        description = input("Enter the description of the product: ")
-        price = int(input("Enter the price of the product: $"))
-        link = input("Enter the link of the product: ")
-        length = input("Enter the number of items in the blog: ")
-        blog_bot = AI.Bot("gpt-3.5-turbo", "assistant", 0.7, 0.8, 1, 0, 0)
-        sell = Prod.Product({product}, {description}, {price}, {link})
-        blog = ""
-        key_words = [product]
-        #key_words = GT.get_trending_keywords(list({product}))
-        
-        conversation_history = []
-        
-        headline_message = f"Generate a catchy and concise blog headline, within 6 to 11 words, focusing on a list of {length} related items or alternatives. One of these items should be closely associated with or similar to '{sell.product_description}'. The headline should be engaging and tailored to highlight the unique features of these items, enticing readers to learn more about them, particularly the affiliate product. Make sure the headline has atleast one word from this list of keywords: {key_words}"
-        headline = blog_bot.create_content(api_key, headline_message, conversation_history)
-        blog += headline
 
-        banner_message = f"Write a search query that is 5 words and simple that would display return andimage for this blog that would be supportive of the headline and target the key demographic, and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching, MAKE SURE IT IS 5 WORDS AND SURROUNDED BY *** query ***, lastly if one of the keywords: {key_words} sounds like a company, then don't add it to your query since it will be hard to find the image then, make the query as simple as possible. MAKE SURE THE QUERY ITSELF IS SURROUNDED BY *** ON ONE SIDE AND *** ON THE OTHER SIDE, IT SHOULD NOT BE ***query*** and then the actual query but rather have the search in the middle"
-        banner = blog_bot.create_content(api_key, banner_message, conversation_history)
+    def create_content(self, topic, keywords, section_count, words_per_section, purpose):
+        total_words = section_count * words_per_section
         
-        blog += "\n" + banner + "\n"
+        sorted_keywords = sorted(keywords, key=lambda k: (k.avg_monthly_searches, {'low': 3, 'medium': 2, 'high': 1}[k.competition.lower()]), reverse=True)
+        
+        keyword_info = "\n".join([f"- {k.word} (Monthly searches: {k.avg_monthly_searches}, Competition: {k.competition})" for k in sorted_keywords])
+        
+        prompt = f"""
+        Create a compelling, SEO-optimized blog post about {topic} that promotes {purpose}. Use these advanced copywriting principles:
 
-        topic_overview_message = f"Write an overview of the topic that would be about 3 - 4 sentences, narrative based showing that you are part of the key demographic, make the introduction to the topic interesting and have a hook so people want to keep reading."
-        topic_overview = blog_bot.create_content(api_key, topic_overview_message, conversation_history)
-        blog += topic_overview
-        
-        covered_content_message = f"Name the specific things you will cover in this blog in the following format, only give the names and seperate them by a comma and all in one line I will be splitting this later in my code with .split(', ') so make it accomodating for that"
-        covered_content = blog_bot.create_content(api_key, covered_content_message, conversation_history)
-        list_items = covered_content.split(", ")
-        
-        for item in list_items:
-            blog += "\n" + "Topic: " + item + "\n"
-            
-            introduction_message = f"create an introduction of the {item} that would be 2 - 3 sentences"
-            introduction = blog_bot.create_content(api_key, introduction_message, conversation_history)
-            blog += introduction
-            
-            image_message = f"create an image of the {item} that would be a search query, similar to the banner and format it as *** query *** because I will use code to extract the query using regex then, make sure to query it as you would as a human into pexels so for example just listing the item name or a simple search without the word image in the query since you are already in a image directory when searching, MAKE SURE IT IS 5 WORDS AND SURROUNDED BY *** query ***, lastly if one of the keywords: {key_words} sounds like a company, then don't add it to your query since it will be hard to find the image then, make the query as simple as possible. MAKE SURE THE QUERY ITSELF IS SURROUNDED BY *** ON ONE SIDE AND *** ON THE OTHER SIDE, IT SHOULD NOT BE ***query*** and then the actual query but rather have the search in the middle"
-            image = blog_bot.create_content(api_key, image_message, conversation_history)
-            blog += "\n" + image + "\n"
-            
-            logic_message = f"create a logical paragraph analysis of the {item} that would be 4 - 5 sentences and then have one sentence that is of relevance that includes atleast one keyword from this list of keywords: {key_words}"
-            logic = blog_bot.create_content(api_key, logic_message, conversation_history)
-            blog += logic
-            
-            emotional_message = f"create a logical paragraph analysis of the {item} that would be 2 - 3 sentences"
-            emotion = blog_bot.create_content(api_key, emotional_message, conversation_history)
-            blog += "\n" + emotion + "\n"
-            
-            cta_message = f"create a call to action for the {item} that would be 1 sentence, it should in the cta have a magnetic reason why they should buy, acknowledge the avatar that would be buying it, give them a goal, show them time running out and end with a container phrase that can be focused on rhyme or alliteration"
-            cta = blog_bot.create_content(api_key, cta_message, conversation_history)
-            blog += cta + "\n"
-            
-        conclusion_message = f"create a conclusion of the blog that would be 2 - 3 sentences"
-        conclusion = blog_bot.create_content(api_key, conclusion_message, conversation_history)
-        blog += "\n" + conclusion
-        
-        return blog
-        
-    if __name__ == "__main__":
-        print(create())
+        1. Start with a captivating headline that grabs attention (spend extra time on this).
+        2. Use the AIDA (Attention, Interest, Desire, Action) and PAS (Problem, Agitation, Solution) frameworks.
+        3. Write in a conversational tone, using simple language (aim for a Hemingway score of 3rd-5th grade).
+        4. Incorporate storytelling to engage the reader.
+        5. Use short sentences and paragraphs, focusing on one thought at a time.
+        6. Create a "slippery slope" effect, making each sentence lead naturally to the next.
+        7. Build tension and resolve it multiple times throughout the post.
+        8. Use active voice and prune unnecessary words.
+        9. Include rhetorical questions and answer them.
+        10. Incorporate self-deprecating humor and honesty to build trust.
+        11. Use italics sparingly to emphasize key points.
+        12. Address potential objections within the content.
+        13. Include testimonials or social proof if relevant.
+        14. End with a clear, specific call-to-action related to {purpose}.
+
+        Incorporate the following keywords naturally throughout the text, prioritizing those with higher search volume and lower competition:
+        {keyword_info}
+
+        The blog should be approximately {total_words} words long and include:
+        1. An attention-grabbing headline (15-20 words) that includes the primary keyword
+        2. A meta description for SEO (150-160 characters) that includes the primary keyword
+        3. An engaging introduction (100-150 words) that presents a problem or pain point
+        4. {section_count} main sections, each with:
+           - A descriptive subheading that includes a keyword where natural
+           - Approximately {words_per_section} words of content
+           - Natural incorporation of keywords, ensuring each keyword is used at least once in the article
+        5. A conclusion that resolves the tension and includes a clear call-to-action (100-150 words)
+        6. A P.S. section that reinforces the main message or offer
+
+        Additional guidelines:
+        - Use the primary keyword in the first 100 words
+        - Include keywords in alt text for images (use !IMAGE_ALT: keyword! where an image would be appropriate)
+        - Create a sense of urgency or FOMO (Fear of Missing Out) where appropriate
+        - Use ellipses (...) occasionally to build suspense
+        - Start some sentences with "And," "But," or "So" to maintain flow
+        - Use phrases in parentheses to add a personal touch
+
+        Format the blog post using Markdown syntax. Use **bold** for subheadings and *italics* for emphasis.
+        """
+
+        self.conversation_history.append({"role": "user", "content": prompt})
+
+        try:
+            if isinstance(client, openai.OpenAI):
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo-16k",
+                    messages=self.conversation_history,
+                    max_tokens=total_words * 2,
+                    temperature=0.7
+                )
+                content = response.choices[0].message.content
+            else:
+                response = client.ChatCompletion.create(
+                    model="gpt-3.5-turbo-16k",
+                    messages=self.conversation_history,
+                    max_tokens=total_words * 2,
+                    temperature=0.7
+                )
+                content = response.choices[0].message['content']
+
+            self.conversation_history.append({"role": "assistant", "content": content})
+            return content
+        except Exception as e:
+            print(f"Error in content creation: {e}")
+            return None
+
+    def extract_meta_description(self, content):
+        lines = content.split('\n')
+        for line in lines:
+            if line.startswith("Meta description:"):
+                return line.replace("Meta description:", "").strip()
+        return None
+
+    def remove_meta_description(self, content):
+        lines = content.split('\n')
+        return '\n'.join([line for line in lines if not line.startswith("Meta description:")])

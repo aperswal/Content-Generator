@@ -1,38 +1,130 @@
-# Automated Blog Content and Image Generation Tool
+# AI SEO Blog Generator
 
-This project consists of an automated system for generating blog content and downloading relevant images using the Pexels API. The system leverages AI-driven content creation to produce engaging blog posts and automatically sources related images to complement the text.
+## Overview
 
-## Modules
-
-- `main.py`: The primary script that orchestrates the blog creation process. It uses other modules to generate content and images.
-- `content_creation.py`: Handles the generation of blog content using OpenAI's GPT model.
-- `image.py`: Manages the downloading of images from Pexels based on queries derived from the blog content.
+The AI SEO Blog Generator is a powerful tool that leverages artificial intelligence to create SEO-optimized blog posts quickly and efficiently. This project uses OpenAI's GPT model for content generation and the Pexels API for sourcing relevant images, producing engaging and visually appealing blog posts.
 
 ## Features
 
-- **Automated Blog Content Creation**: Leverages OpenAI's GPT model to generate engaging and relevant blog content.
-- **Dynamic Image Sourcing**: Automatically downloads images from Pexels that match the blog's content.
-- **Unique Image Download**: Ensures that the same image is not downloaded multiple times, even if repeated queries are made.
-- **Customizable Blog Structure**: Facilitates the creation of blogs with custom headlines, topics, and calls to action.
+- **AI-Driven Content Creation**: Utilizes OpenAI's GPT model to generate SEO-optimized blog content.
+- **Advanced Copywriting Techniques**: Incorporates AIDA and PAS frameworks, storytelling, and other persuasive writing principles.
+- **Keyword Optimization**: Strategically uses provided keywords based on search volume and competition.
+- **Dynamic Image Sourcing**: Automatically fetches and incorporates relevant images from Pexels.
+- **Robust Image Handling**: Implements retry mechanisms and fallbacks for image sourcing.
+- **Customizable Blog Structure**: Allows for flexible blog post creation with customizable sections and word counts.
+- **Purpose-Driven Content**: Tailors content to specific marketing goals or purposes.
+- **AWS Amplify Integration**: Ready for deployment on AWS Amplify for scalable, serverless operation.
 
-## Requirements
+## Project Structure
 
+```
+project_root/
+│
+├── frontend/
+│   ├── index.html
+│   ├── styles.css
+│   └── script.js
+│
+├── amplify/
+│   └── backend/
+│       └── function/
+│           └── blogGenerator/
+│               ├── src/
+│               │   ├── index.py
+│               │   ├── main.py
+│               │   ├── Content_Creation.py
+│               │   └── Image.py
+│               └── requirements.txt
+│
+├── amplify.yml
+└── README.md
+```
+
+## Setup and Deployment
+
+### Prerequisites
+
+- Node.js and npm
+- AWS Account
+- AWS Amplify CLI
 - Python 3.x
-- `python-docx` library for creating Word documents.
-- `requests` library for handling HTTP requests.
-- `pexels_api` Python wrapper for interacting with the Pexels API.
-- `python-dotenv` for managing environment variables.
-- OpenAI and Pexels API keys.
 
-## Setup
+### Local Development
 
-1. **Install Dependencies**: Run `pip install python-docx requests pexels_api python-dotenv` to install the required Python libraries.
-2. **API Keys**: Ensure that you have valid API keys from OpenAI and Pexels. Place them in a `.env` file in your project directory.
-3. **Environment Variables**: Use `python-dotenv` to load API keys from your `.env` file.
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/ai-seo-blog-generator.git
+   cd ai-seo-blog-generator
+   ```
+
+2. Install dependencies:
+   ```
+   pip install -r amplify/backend/function/blogGenerator/src/requirements.txt
+   ```
+
+3. Set up your `.env` file with necessary API keys:
+   ```
+   OPENAI_API_KEY=your_openai_api_key
+   PEXELS_API_KEY=your_pexels_api_key
+   ```
+
+### AWS Amplify Deployment
+
+1. Install and configure the AWS Amplify CLI.
+
+2. Initialize the Amplify project:
+   ```
+   amplify init
+   ```
+
+3. Add API and Lambda function:
+   ```
+   amplify add api
+   ```
+
+4. Add storage (DynamoDB and S3):
+   ```
+   amplify add storage
+   ```
+
+5. Deploy backend resources:
+   ```
+   amplify push
+   ```
+
+6. Set up frontend hosting:
+   ```
+   amplify add hosting
+   ```
+
+7. Publish the application:
+   ```
+   amplify publish
+   ```
+
+8. Update the API Gateway URL in `frontend/script.js` with the provided URL after deployment.
 
 ## Usage
 
-1. Run `main.py` to start the blog creation process.
-2. Follow the prompts to input product information and desired blog structure.
-3. The script generates the blog content and downloads relevant images, saving them in the specified directory.
-4. The final blog content is saved in a Word document.
+1. Navigate to the deployed website URL.
+2. Enter the blog topic, purpose, and keywords in the provided form.
+3. Specify the number of sections and words per section.
+4. Click "Generate Blog Post" to start the process.
+5. Monitor the progress bar for status updates.
+6. Download the generated blog post when complete.
+
+## Contributing
+
+Contributions to improve the AI SEO Blog Generator are welcome. Please follow these steps:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Acknowledgments
+
+- OpenAI for providing the GPT model
+- Pexels for the image API
+- AWS for the Amplify platform and serverless technologies

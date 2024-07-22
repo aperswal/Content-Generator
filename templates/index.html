@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SEO Blog Generator | Create Engaging Content in Minutes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .gradient-bg { background: linear-gradient(90deg, #4F46E5, #7C3AED); }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <header class="gradient-bg text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold mb-4">AI SEO Blog Generator</h1>
+            <p class="text-xl">Create engaging, SEO-optimized blog posts in minutes. Let AI do the heavy lifting!</p>
+        </div>
+    </header>
+    
+    <main class="max-w-3xl mx-auto mt-8 p-4 bg-white rounded-lg shadow-md">
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">How It Works</h2>
+            <ol class="list-decimal list-inside space-y-2">
+                <li>Enter your blog topic and purpose</li>
+                <li>Add keywords with their search volume and competition</li>
+                <li>Specify the number of sections and words per section</li>
+                <li>Click "Generate Blog Post" and watch the magic happen!</li>
+                <li>Download your professionally written, SEO-optimized blog post</li>
+            </ol>
+        </section>
+
+        <form id="blogForm" class="space-y-6">
+            <div>
+                <label for="topic" class="block text-sm font-medium text-gray-700">Blog Topic</label>
+                <input type="text" id="topic" name="topic" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <p class="mt-1 text-sm text-gray-500">e.g., "Benefits of Meditation for Stress Relief"</p>
+            </div>
+            
+            <div>
+                <label for="purpose" class="block text-sm font-medium text-gray-700">Blog Purpose</label>
+                <input type="text" id="purpose" name="purpose" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <p class="mt-1 text-sm text-gray-500">e.g., "Promote a new meditation app"</p>
+            </div>
+            
+            <div>
+                <label for="keywords" class="block text-sm font-medium text-gray-700">Keywords (JSON format)</label>
+                <textarea id="keywords" name="keywords" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" rows="4"></textarea>
+                <p class="mt-1 text-sm text-gray-500">Format: [{"word":"keyword", "avg_monthly_searches":1000, "competition":"low"}]</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="section_count" class="block text-sm font-medium text-gray-700">Number of Sections</label>
+                    <input type="number" id="section_count" name="section_count" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value="5">
+                </div>
+                <div>
+                    <label for="words_per_section" class="block text-sm font-medium text-gray-700">Words per Section</label>
+                    <input type="number" id="words_per_section" name="words_per_section" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" value="300">
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-bg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Generate Blog Post
+            </button>
+        </form>
+        
+        <div id="progressContainer" class="mt-8 hidden">
+            <h3 class="text-lg font-semibold mb-2">Generation Progress</h3>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progressBar" class="gradient-bg h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <p id="statusMessage" class="mt-2 text-sm text-gray-600"></p>
+        </div>
+        
+        <button id="downloadButton" class="mt-8 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 hidden">
+            Download Blog Post
+        </button>
+    </main>
+    
+    <footer class="mt-12 py-6 px-4 bg-gray-800 text-white text-center">
+        <p>&copy; 2023 AI SEO Blog Generator. All rights reserved.</p>
+    </footer>
+
+    <div id="errorContainer" class="mt-8 hidden">
+        <h3 class="text-lg font-semibold mb-2 text-red-600">Error</h3>
+        <p id="errorMessage" class="text-sm text-red-600"></p>
+    </div>
+
+    <script>
+        document.getElementById('blogForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/generate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('progressContainer').classList.remove('hidden');
+                document.getElementById('errorContainer').classList.add('hidden');
+                updateProgress();
+            });
+        });
+
+        function updateProgress() {
+            fetch('/progress')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('progressBar').style.width = data.progress + '%';
+                document.getElementById('statusMessage').textContent = data.status;
+                if (data.error) {
+                    document.getElementById('errorContainer').classList.remove('hidden');
+                    document.getElementById('errorMessage').textContent = data.error;
+                    document.getElementById('downloadButton').classList.add('hidden');
+                } else if (data.progress < 100) {
+                    setTimeout(updateProgress, 1000);
+                } else {
+                    document.getElementById('downloadButton').classList.remove('hidden');
+                }
+            });
+        }
+
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            window.location.href = '/download';
+        });
+    </script>
+</body>
+</html>
