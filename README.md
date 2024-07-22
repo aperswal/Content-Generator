@@ -13,53 +13,38 @@ The AI SEO Blog Generator is a powerful tool that leverages artificial intellige
 - **Robust Image Handling**: Implements retry mechanisms and fallbacks for image sourcing.
 - **Customizable Blog Structure**: Allows for flexible blog post creation with customizable sections and word counts.
 - **Purpose-Driven Content**: Tailors content to specific marketing goals or purposes.
-- **AWS Amplify Integration**: Ready for deployment on AWS Amplify for scalable, serverless operation.
 
 ## Project Structure
 
 ```
 project_root/
 │
-├── frontend/
+├── templates/
 │   ├── index.html
-│   ├── styles.css
-│   └── script.js
-│
-├── amplify/
-│   └── backend/
-│       └── function/
-│           └── blogGenerator/
-│               ├── src/
-│               │   ├── index.py
-│               │   ├── main.py
-│               │   ├── Content_Creation.py
-│               │   └── Image.py
-│               └── requirements.txt
-│
-├── amplify.yml
+├── web_interface.py
+├── main.py
+├── Content_Creation.py
+├── Image.py
+├── requirements.txt
 └── README.md
 ```
 
 ## Setup and Deployment
 
 ### Prerequisites
-
-- Node.js and npm
-- AWS Account
-- AWS Amplify CLI
 - Python 3.x
 
 ### Local Development
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/ai-seo-blog-generator.git
-   cd ai-seo-blog-generator
+   git clone https://github.com/aperswal/content-generator.git
+   cd content-generator
    ```
 
 2. Install dependencies:
    ```
-   pip install -r amplify/backend/function/blogGenerator/src/requirements.txt
+   pip install -r requirements.txt
    ```
 
 3. Set up your `.env` file with necessary API keys:
@@ -67,42 +52,6 @@ project_root/
    OPENAI_API_KEY=your_openai_api_key
    PEXELS_API_KEY=your_pexels_api_key
    ```
-
-### AWS Amplify Deployment
-
-1. Install and configure the AWS Amplify CLI.
-
-2. Initialize the Amplify project:
-   ```
-   amplify init
-   ```
-
-3. Add API and Lambda function:
-   ```
-   amplify add api
-   ```
-
-4. Add storage (DynamoDB and S3):
-   ```
-   amplify add storage
-   ```
-
-5. Deploy backend resources:
-   ```
-   amplify push
-   ```
-
-6. Set up frontend hosting:
-   ```
-   amplify add hosting
-   ```
-
-7. Publish the application:
-   ```
-   amplify publish
-   ```
-
-8. Update the API Gateway URL in `frontend/script.js` with the provided URL after deployment.
 
 ## Usage
 
@@ -127,4 +76,3 @@ Contributions to improve the AI SEO Blog Generator are welcome. Please follow th
 
 - OpenAI for providing the GPT model
 - Pexels for the image API
-- AWS for the Amplify platform and serverless technologies
